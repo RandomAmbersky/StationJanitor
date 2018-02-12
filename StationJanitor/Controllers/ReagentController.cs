@@ -48,18 +48,27 @@ namespace StationJanitor.Controllers
             foreach (XmlNode Thing in Things)
             {
 
-                if (Printers.Contains(Thing.SelectSingleNode("PrefabName").InnerText)) {
+                if (Printers.Contains(Thing.SelectSingleNode("PrefabName").InnerText))
+                {
 
-                    Debug.WriteLine(Thing.SelectSingleNode("PrefabName").InnerText);
+                    XmlNode Reagents = Thing.SelectSingleNode("Reagents");                  
 
-                    XmlNode Reagents = Thing.SelectSingleNode("Reagents");
-                    Reagents.RemoveAll();
-                    _AddAllReagents(Reagents, Quantity);
+                    if (Thing.SelectSingleNode("CustomName").InnerText.EndsWith(".Empty"))
+                    {
+                        Console.WriteLine($"Emptying {Thing.SelectSingleNode("PrefabName").InnerText}");
+                        Reagents.RemoveAll();
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Filling {Thing.SelectSingleNode("PrefabName").InnerText}");
+
+                        Reagents.RemoveAll();
+                        _AddAllReagents(Reagents, Quantity);
+                    }
 
                 }
 
             }
-
         }
 
         private static void _AddAllReagents(XmlNode Parent, int Quantity)
