@@ -16,7 +16,11 @@ namespace StationJanitor.Controllers
         private enum Untouchables
         {
             DynamicCrate,
-            Character // Addes this so that the Characters remain intact
+            Character, // Addes this so that the Characters remain intact
+            ItemRoadFlare,
+            DynamicAirController,
+            DynamicScrubber,
+            DynamicLight
         }
 
         [CliCommand("removeTrash", "Removes all objects lying on the ground")]
