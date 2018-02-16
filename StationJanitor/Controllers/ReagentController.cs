@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using CommandAndConquer.CLI.Attributes;
 using System.Diagnostics;
 using System.Xml;
+using System.Xml.Serialization;
+using Assets.Scripts.Atmospherics;
 
 namespace StationJanitor.Controllers
 {
@@ -34,6 +36,23 @@ namespace StationJanitor.Controllers
 
         }
 
+        [CliCommand("Tanks", "Fill tanks if they have been renamed to indicate what they should contain")]
+        public static void FillTanks(string pathToWorldXml)
+        {
+
+            Console.WriteLine("Filling Tanks");
+
+            XmlDocument World = WorldReader.ReadWorld(pathToWorldXml);
+            XmlNode ThingsRoot = World.GetElementsByTagName("Things")[0];
+            XmlNode AtmosRoot = World.GetElementsByTagName("Atmospheres")[0];
+
+
+            _FillTanks(ThingsRoot.ChildNodes, AtmosRoot.ChildNodes);
+
+            WorldReader.SaveWorld(pathToWorldXml, World);
+
+        }
+
         private static void _FillPrinters(XmlNodeList Things, int Quantity)
         {
 
@@ -51,7 +70,7 @@ namespace StationJanitor.Controllers
                 if (Printers.Contains(Thing.SelectSingleNode("PrefabName").InnerText))
                 {
 
-                    XmlNode Reagents = Thing.SelectSingleNode("Reagents");                  
+                    XmlNode Reagents = Thing.SelectSingleNode("Reagents");
 
                     if (Thing.SelectSingleNode("CustomName").InnerText.EndsWith(".Empty"))
                     {
@@ -114,6 +133,133 @@ namespace StationJanitor.Controllers
             NewReagent.AppendChild(NewQuantity);
 
             Parent.AppendChild(NewReagent);
+
+        }
+
+        private static void _FillTanks(XmlNodeList Things, XmlNodeList Atmospheres)
+        {
+
+            Dictionary<string, int> Tanks = new Dictionary<string, int>() {
+                { "StructureTankSmall", 10000 },
+                { "ItemGasCanisterEmpty",75 }
+            };
+
+            List<string> Gases = new List<string>()
+            {
+                nameof(Assets.Scripts.Atmospherics.Nitrogen),
+                nameof(Assets.Scripts.Atmospherics.Oxygen),
+                nameof(Assets.Scripts.Atmospherics.CarbonDioxide),
+                nameof(Assets.Scripts.Atmospherics.Volatiles),
+                nameof(Assets.Scripts.Atmospherics.Pollutant),
+                nameof(Assets.Scripts.Atmospherics.Water),
+                "Welder"
+            };
+
+            foreach (XmlNode Thing in Things)
+            {
+
+                if (Tanks.ContainsKey(Thing.SelectSingleNode("PrefabName").InnerText))
+                {
+
+                    if (Thing.SelectSingleNode("CustomName").InnerText == "" || !Gases.Contains(Thing.SelectSingleNode("CustomName").InnerText))
+                    {
+                        continue;
+                    }
+
+                    if (Tanks.TryGetValue(Thing.SelectSingleNode("PrefabName").InnerText, out int MolesToAdd))
+                    {
+                        Console.WriteLine($"Adding {Thing.SelectSingleNode("CustomName").InnerText} to {Thing.SelectSingleNode("PrefabName").InnerText}");
+                        string ThingReferenceID = Thing.SelectSingleNode("ReferenceId").InnerText;
+
+                        XmlNode Content = _FindAtmosphereByReferenceId(Atmospheres, Thing.SelectSingleNode("ReferenceId").InnerText);
+
+                        if (Content == null)
+                        {
+                            Debug.WriteLine("No Content found.");
+                        }
+                        else
+                        {
+                            switch (Thing.SelectSingleNode("CustomName").InnerText)
+                            {
+                                case "Nitrogen":
+
+                                    Content.SelectSingleNode("Nitrogen").InnerText = MolesToAdd.ToString("0");
+                                    Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 20.6 * 253.15).ToString("0");
+
+                                    break;
+
+                                case "CarbonDioxide":
+
+                                    Content.SelectSingleNode("CarbonDioxide").InnerText = MolesToAdd.ToString("0");
+                                    Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 28.2 * 253.15).ToString("0");
+
+                                    break;
+
+                                case "Oxygen":
+
+                                    Content.SelectSingleNode("Oxygen").InnerText = MolesToAdd.ToString("0");
+                                    Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 21.1 * 253.15).ToString("0");
+
+                                    break;
+
+                                case "Water":
+
+                                    Content.SelectSingleNode("Water").InnerText = MolesToAdd.ToString("0");
+                                    Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 72 * 253.15).ToString("0");
+
+                                    break;
+
+                                case "Pollutant":
+
+                                    Content.SelectSingleNode("Chlorine").InnerText = MolesToAdd.ToString("0");
+                                    Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 24.8 * 253.15).ToString("0");
+
+                                    break;
+
+                                case "Volatiles":
+
+                                    Content.SelectSingleNode("Volatiles").InnerText = MolesToAdd.ToString("0");
+                                    Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 20.4 * 253.15).ToString("0");
+
+                                    break;
+
+                                case "Welder":
+
+                                    Content.SelectSingleNode("Oxygen").InnerText = "7500";
+                                    Content.SelectSingleNode("Volatiles").InnerText = "15000";
+
+                                    Content.SelectSingleNode("Energy").InnerText = ((7500 * 21.1 * 253.15) + (15000 * 20.4 * 253.15)).ToString("0");
+
+                                    break;
+
+                                default:
+
+                                    break;
+                            }
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        private static XmlNode _FindAtmosphereByReferenceId(XmlNodeList Atmospheres, string ReferenceId)
+        {
+            Debug.WriteLine($"Searching for {ReferenceId}");
+
+            foreach (XmlNode Atmos in Atmospheres)
+            {
+
+                if (Atmos.InnerXml.Contains("ThingReferenceId") && Atmos.SelectSingleNode("ThingReferenceId").InnerText == ReferenceId)
+                {
+                    return Atmos;
+                }
+            }
+
+            return null;
 
         }
 
