@@ -139,8 +139,11 @@ namespace StationJanitor.Controllers
         private static void _FillTanks(XmlNodeList Things, XmlNodeList Atmospheres)
         {
 
+            float SetTemperature = 253.15f;
+            float Ratio = 0f;
+
             Dictionary<string, int> Tanks = new Dictionary<string, int>() {
-                { "StructureTankSmall", 10000 },
+                { "StructureTankSmall", 20000 },
                 { "ItemGasCanisterEmpty",75 }
             };
 
@@ -152,7 +155,8 @@ namespace StationJanitor.Controllers
                 nameof(Assets.Scripts.Atmospherics.Volatiles),
                 nameof(Assets.Scripts.Atmospherics.Pollutant),
                 nameof(Assets.Scripts.Atmospherics.Water),
-                "Welder"
+                "Welder",
+                "Furnace"
             };
 
             foreach (XmlNode Thing in Things)
@@ -168,7 +172,8 @@ namespace StationJanitor.Controllers
 
                     if (Tanks.TryGetValue(Thing.SelectSingleNode("PrefabName").InnerText, out int MolesToAdd))
                     {
-                        Console.WriteLine($"Adding {Thing.SelectSingleNode("CustomName").InnerText} to {Thing.SelectSingleNode("PrefabName").InnerText}");
+
+                        Console.WriteLine($"Adding {Thing.SelectSingleNode("CustomName").InnerText} to {Thing.SelectSingleNode("PrefabName").InnerText}, Moles: {MolesToAdd}");
                         string ThingReferenceID = Thing.SelectSingleNode("ReferenceId").InnerText;
 
                         XmlNode Content = _FindAtmosphereByReferenceId(Atmospheres, Thing.SelectSingleNode("ReferenceId").InnerText);
@@ -184,51 +189,64 @@ namespace StationJanitor.Controllers
                                 case "Nitrogen":
 
                                     Content.SelectSingleNode("Nitrogen").InnerText = MolesToAdd.ToString("0");
-                                    Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 20.6 * 253.15).ToString("0");
+                                    Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 20.6 * SetTemperature).ToString("0");
 
                                     break;
 
                                 case "CarbonDioxide":
 
                                     Content.SelectSingleNode("CarbonDioxide").InnerText = MolesToAdd.ToString("0");
-                                    Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 28.2 * 253.15).ToString("0");
+                                    Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 28.2 * SetTemperature).ToString("0");
 
                                     break;
 
                                 case "Oxygen":
 
                                     Content.SelectSingleNode("Oxygen").InnerText = MolesToAdd.ToString("0");
-                                    Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 21.1 * 253.15).ToString("0");
+                                    Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 21.1 * SetTemperature).ToString("0");
 
                                     break;
 
                                 case "Water":
 
                                     Content.SelectSingleNode("Water").InnerText = MolesToAdd.ToString("0");
-                                    Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 72 * 253.15).ToString("0");
+                                    Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 72 * SetTemperature).ToString("0");
 
                                     break;
 
                                 case "Pollutant":
 
                                     Content.SelectSingleNode("Chlorine").InnerText = MolesToAdd.ToString("0");
-                                    Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 24.8 * 253.15).ToString("0");
+                                    Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 24.8 * SetTemperature).ToString("0");
 
                                     break;
 
                                 case "Volatiles":
 
                                     Content.SelectSingleNode("Volatiles").InnerText = MolesToAdd.ToString("0");
-                                    Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 20.4 * 253.15).ToString("0");
+                                    Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 20.4 * SetTemperature).ToString("0");
 
                                     break;
 
                                 case "Welder":
 
-                                    Content.SelectSingleNode("Oxygen").InnerText = "7500";
-                                    Content.SelectSingleNode("Volatiles").InnerText = "15000";
+                                    Ratio = MolesToAdd / 3;
 
-                                    Content.SelectSingleNode("Energy").InnerText = ((7500 * 21.1 * 253.15) + (15000 * 20.4 * 253.15)).ToString("0");
+                                    Content.SelectSingleNode("Oxygen").InnerText = Math.Abs(Ratio).ToString("0");
+                                    Content.SelectSingleNode("Volatiles").InnerText = Math.Abs(2 * Ratio).ToString("0");
+
+                                    Content.SelectSingleNode("Energy").InnerText = ((Math.Abs(Ratio) * 21.1 * SetTemperature) + (Math.Abs(2 * Ratio) * 20.4 * SetTemperature)).ToString("0");
+
+                                    break;
+
+                                case "Furnace":
+
+                                    Ratio = MolesToAdd / 5;
+
+                                    Content.SelectSingleNode("Oxygen").InnerText = Math.Abs(Ratio).ToString("0"); ;
+                                    Content.SelectSingleNode("Volatiles").InnerText = Math.Abs(4 * Ratio).ToString("0");
+
+                                    Content.SelectSingleNode("Energy").InnerText = ((Math.Abs(Ratio) * 21.1 * SetTemperature) + (Math.Abs(4 * Ratio) * 20.4 * SetTemperature)).ToString("0");
 
                                     break;
 
