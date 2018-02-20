@@ -184,6 +184,15 @@ namespace StationJanitor.Controllers
                         }
                         else
                         {
+
+                            Content.SelectSingleNode("Oxygen").InnerText = "";
+                            Content.SelectSingleNode("Nitrogen").InnerText = "";
+                            Content.SelectSingleNode("CarbonDioxide").InnerText = "";
+                            Content.SelectSingleNode("Volatiles").InnerText = "";
+                            Content.SelectSingleNode("Chlorine").InnerText = "";
+                            Content.SelectSingleNode("Water").InnerText = "";
+                            Content.SelectSingleNode("Energy").InnerText = "0";
+
                             switch (Thing.SelectSingleNode("CustomName").InnerText)
                             {
                                 case "Nitrogen":
@@ -215,6 +224,7 @@ namespace StationJanitor.Controllers
                                     break;
 
                                 case "Pollutant":
+                                case "Chlorine":
 
                                     Content.SelectSingleNode("Chlorine").InnerText = MolesToAdd.ToString("0");
                                     Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 24.8 * SetTemperature).ToString("0");
@@ -222,11 +232,12 @@ namespace StationJanitor.Controllers
                                     break;
 
                                 case "Volatiles":
+                                case "Hydrogen":
 
                                     Content.SelectSingleNode("Volatiles").InnerText = MolesToAdd.ToString("0");
                                     Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 20.4 * SetTemperature).ToString("0");
 
-                                    break;
+                                    break;                                    
 
                                 case "Welder":
 
