@@ -143,7 +143,8 @@ namespace StationJanitor.Controllers
             float Ratio = 0f;
 
             Dictionary<string, int> Tanks = new Dictionary<string, int>() {
-                { "StructureTankSmall", 20000 },
+                { "StructureTankSmall", 30000 },
+                { "StructureTankBig", 300000 },
                 { "ItemGasCanisterEmpty",75 }
             };
 
@@ -185,31 +186,20 @@ namespace StationJanitor.Controllers
                         else
                         {
 
-                            Content.SelectSingleNode("Oxygen").InnerText = "";
-                            Content.SelectSingleNode("Nitrogen").InnerText = "";
-                            Content.SelectSingleNode("CarbonDioxide").InnerText = "";
-                            Content.SelectSingleNode("Volatiles").InnerText = "";
-                            Content.SelectSingleNode("Chlorine").InnerText = "";
-                            Content.SelectSingleNode("Water").InnerText = "";
+                            Content.SelectSingleNode("Oxygen").InnerText = "0";
+                            Content.SelectSingleNode("Nitrogen").InnerText = "0";
+                            Content.SelectSingleNode("CarbonDioxide").InnerText = "0";
+                            Content.SelectSingleNode("Volatiles").InnerText = "0";
+                            Content.SelectSingleNode("Chlorine").InnerText = "0";
+                            Content.SelectSingleNode("Water").InnerText = "0";
                             Content.SelectSingleNode("Energy").InnerText = "0";
 
                             switch (Thing.SelectSingleNode("CustomName").InnerText)
                             {
-                                case "Nitrogen":
-
-                                    Content.SelectSingleNode("Nitrogen").InnerText = MolesToAdd.ToString("0");
-                                    Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 20.6 * SetTemperature).ToString("0");
-
-                                    break;
-
-                                case "CarbonDioxide":
-
-                                    Content.SelectSingleNode("CarbonDioxide").InnerText = MolesToAdd.ToString("0");
-                                    Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 28.2 * SetTemperature).ToString("0");
-
-                                    break;
 
                                 case "Oxygen":
+
+                                    Thing.SelectSingleNode("CustomColorIndex").InnerText = "-1"; // White
 
                                     Content.SelectSingleNode("Oxygen").InnerText = MolesToAdd.ToString("0");
                                     Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 21.1 * SetTemperature).ToString("0");
@@ -218,28 +208,35 @@ namespace StationJanitor.Controllers
 
                                 case "Water":
 
+                                    Thing.SelectSingleNode("CustomColorIndex").InnerText = "0"; // Blue
+
                                     Content.SelectSingleNode("Water").InnerText = MolesToAdd.ToString("0");
                                     Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 72 * SetTemperature).ToString("0");
 
                                     break;
 
-                                case "Pollutant":
-                                case "Chlorine":
+                                case "CarbonDioxide":
 
-                                    Content.SelectSingleNode("Chlorine").InnerText = MolesToAdd.ToString("0");
-                                    Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 24.8 * SetTemperature).ToString("0");
+                                    Thing.SelectSingleNode("CustomColorIndex").InnerText = "1"; // Grey
+
+                                    Content.SelectSingleNode("CarbonDioxide").InnerText = MolesToAdd.ToString("0");
+                                    Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 28.2 * SetTemperature).ToString("0");
 
                                     break;
 
-                                case "Volatiles":
-                                case "Hydrogen":
 
-                                    Content.SelectSingleNode("Volatiles").InnerText = MolesToAdd.ToString("0");
-                                    Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 20.4 * SetTemperature).ToString("0");
+                                case "Nitrogen":
 
-                                    break;                                    
+                                    Thing.SelectSingleNode("CustomColorIndex").InnerText = "2"; // Green
+
+                                    Content.SelectSingleNode("Nitrogen").InnerText = MolesToAdd.ToString("0");
+                                    Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 20.6 * SetTemperature).ToString("0");
+
+                                    break;
 
                                 case "Welder":
+
+                                    Thing.SelectSingleNode("CustomColorIndex").InnerText = "3"; // Orange
 
                                     Ratio = MolesToAdd / 3;
 
@@ -250,7 +247,29 @@ namespace StationJanitor.Controllers
 
                                     break;
 
+                                case "Volatiles":
+                                case "Hydrogen":
+
+                                    Thing.SelectSingleNode("CustomColorIndex").InnerText = "4"; // Red
+
+                                    Content.SelectSingleNode("Volatiles").InnerText = MolesToAdd.ToString("0");
+                                    Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 20.4 * SetTemperature).ToString("0");
+
+                                    break;
+
+                                case "Pollutant":
+                                case "Chlorine":
+
+                                    Thing.SelectSingleNode("CustomColorIndex").InnerText = "5"; // No idea
+
+                                    Content.SelectSingleNode("Chlorine").InnerText = MolesToAdd.ToString("0");
+                                    Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 24.8 * SetTemperature).ToString("0");
+
+                                    break;
+
                                 case "Furnace":
+
+                                    Thing.SelectSingleNode("CustomColorIndex").InnerText = "7"; // Black
 
                                     Ratio = MolesToAdd / 5;
 
