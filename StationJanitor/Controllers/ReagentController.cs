@@ -53,6 +53,12 @@ namespace StationJanitor.Controllers
 
         }
 
+        [CliCommand("Batteries","Max out battery charge")]
+        public static void FillBatteries(string PathToWorldXml)
+        {
+
+        }
+
         private static void _FillPrinters(XmlNodeList Things, int Quantity)
         {
 
@@ -156,6 +162,8 @@ namespace StationJanitor.Controllers
                 nameof(Assets.Scripts.Atmospherics.Volatiles),
                 nameof(Assets.Scripts.Atmospherics.Pollutant),
                 nameof(Assets.Scripts.Atmospherics.Water),
+                "Hydrogen",
+                "Chlorine",
                 "Welder",
                 "Furnace"
             };

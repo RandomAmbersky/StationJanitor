@@ -72,6 +72,38 @@ namespace StationJanitor.Controllers
 
         }
 
+        [CliCommand("Steel","Take parentless SteelFrames and SteelSheets and max their stack")]
+        public static void MaxSteel(string pathToWorldXml)
+        {
+
+            Dictionary<string, int> Items = new Dictionary<string, int>() {
+                { "ItemSteelSheets", 50 },
+                { "ItemSteelFrames", 30 }
+            };
+
+            Console.WriteLine("Working on steel building materials");
+
+            XmlDocument World = WorldReader.ReadWorld(pathToWorldXml);
+            XmlNode ThingsRoot = World.GetElementsByTagName("Things")[0];
+
+            foreach (XmlNode Thing in ThingsRoot.ChildNodes)
+            {
+
+                if (Items.ContainsKey(Thing.SelectSingleNode("PrefabName").InnerText) && Thing.SelectSingleNode("ParentReferenceId").InnerText == "0")
+                {
+                    if (Items.TryGetValue(Thing.SelectSingleNode("PrefabName").InnerText, out int Quantity))
+                    {
+                        Console.WriteLine($"Setting {Thing.SelectSingleNode("PrefabName").InnerText} stack to Quantity: {Quantity}");
+                        Thing.SelectSingleNode("Quantity").InnerText = Quantity.ToString("0");
+                    }
+                }
+
+            }
+
+            WorldReader.SaveWorld(pathToWorldXml, World);
+
+        }
+
         private static void _MaxIngots(XmlNodeList Things, string StackSize)
         {
             foreach (XmlNode Thing in Things)
