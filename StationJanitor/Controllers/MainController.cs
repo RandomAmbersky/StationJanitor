@@ -86,6 +86,40 @@ namespace StationJanitor.Controllers
             return;
         }
 
+        [CliCommand("Statistics", "Check the Things !")]
+        public static void CreateStatistics(string pathToWorldXml, int Minimum = 25)
+        {
+            XmlDocument World = WorldReader.ReadWorld(pathToWorldXml);
+            XmlNode ThingsRoot = World.GetElementsByTagName("Things")[0];
+
+            SortedList<string, int> ThingTypes = new SortedList<string, int>();
+
+            foreach (XmlNode Thing in ThingsRoot.ChildNodes)
+            {
+                string PrefabName = Thing.SelectSingleNode("PrefabName").InnerText;
+
+                if (ThingTypes.ContainsKey(PrefabName))
+                {
+                    ThingTypes[PrefabName] += 1;
+                }
+                else
+                {
+                    ThingTypes.Add(PrefabName, 1);
+                }
+
+            }
+
+            foreach (string PrefabName in ThingTypes.Keys)
+            {
+                if (ThingTypes[PrefabName] > Minimum)
+                {
+                    Debug.WriteLine($"{PrefabName} -> {ThingTypes[PrefabName]}");
+
+                }
+            }
+
+        }
+
         private static void RemoveChildrenRecursive(string recursiveReferenceId, XmlNodeList things, ref List<XmlNode> removeList, ref List<string> PrefabNames)
         {
 
