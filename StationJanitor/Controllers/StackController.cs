@@ -104,6 +104,64 @@ namespace StationJanitor.Controllers
 
         }
 
+        [CliCommand("SteelFrames", "Take parentless SteelFrames and SteelSheets and max their stack")]
+        public static void BuildSteelFrames(string pathToWorldXml, int FromState = 0, int ToState = 2)
+        {
+
+            Console.WriteLine("Working on steel frames");
+            int Counter = 0;
+
+            XmlDocument World = WorldReader.ReadWorld(pathToWorldXml);
+            XmlNode ThingsRoot = World.GetElementsByTagName("Things")[0];
+
+            foreach (XmlNode Thing in ThingsRoot.ChildNodes)
+            {
+
+                if (Thing.SelectSingleNode("PrefabName").InnerText == "StructureFrame" && Thing.SelectSingleNode("CurrentBuildState").InnerText == FromState.ToString("0"))
+                {
+
+                    Counter += 1;
+                    Thing.SelectSingleNode("CurrentBuildState").InnerText = ToState.ToString("0");
+
+                }
+
+            }
+
+            Console.WriteLine($"Updated {Counter} SteelFrames.");
+
+            WorldReader.SaveWorld(pathToWorldXml, World);
+
+        }
+
+        [CliCommand("Windows", "Take parentless SteelFrames and SteelSheets and max their stack")]
+        public static void BuildWindows(string pathToWorldXml, int FromState = 0, int ToState = 2)
+        {
+
+            Console.WriteLine("Working on composite windows");
+            int Counter = 0;
+
+            XmlDocument World = WorldReader.ReadWorld(pathToWorldXml);
+            XmlNode ThingsRoot = World.GetElementsByTagName("Things")[0];
+
+            foreach (XmlNode Thing in ThingsRoot.ChildNodes)
+            {
+
+                if (Thing.SelectSingleNode("PrefabName").InnerText == "StructureCompositeWindow" && Thing.SelectSingleNode("CurrentBuildState").InnerText == FromState.ToString("0"))
+                {
+
+                    Counter += 1;
+                    Thing.SelectSingleNode("CurrentBuildState").InnerText = ToState.ToString("0");
+
+                }
+
+            }
+
+            Console.WriteLine($"Updated {Counter} windows.");
+
+            WorldReader.SaveWorld(pathToWorldXml, World);
+
+        }
+
         private static void _MaxIngots(XmlNodeList Things, string StackSize)
         {
             foreach (XmlNode Thing in Things)
