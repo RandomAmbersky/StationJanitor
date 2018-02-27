@@ -150,6 +150,7 @@ namespace StationJanitor.Controllers
 
             Dictionary<string, int> Tanks = new Dictionary<string, int>() {
                 { "StructureTankSmall", 30000 },
+                { "DynamicGasCanisterEmpty", 15000 },
                 { "StructureTankBig", 300000 },
                 { "ItemGasCanisterEmpty",75 }
             };
@@ -165,7 +166,8 @@ namespace StationJanitor.Controllers
                 "Hydrogen",
                 "Chlorine",
                 "Welder",
-                "Furnace"
+                "Furnace",
+                "Air"
             };
 
             foreach (XmlNode Thing in Things)
@@ -272,6 +274,19 @@ namespace StationJanitor.Controllers
 
                                     Content.SelectSingleNode("Chlorine").InnerText = MolesToAdd.ToString("0");
                                     Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 24.8 * SetTemperature).ToString("0");
+
+                                    break;
+
+                                case "Air":
+
+                                    Thing.SelectSingleNode("CustomColorIndex").InnerText = "9"; // No Idea
+
+                                    Ratio = MolesToAdd / 4;
+
+                                    Content.SelectSingleNode("Oxygen").InnerText = Math.Abs(Ratio).ToString("0"); ;
+                                    Content.SelectSingleNode("Nitrogen").InnerText = Math.Abs(3 * Ratio).ToString("0");
+
+                                    Content.SelectSingleNode("Energy").InnerText = ((Math.Abs(Ratio) * 21.1 * SetTemperature) + (Math.Abs(3 * Ratio) * 20.6 * SetTemperature)).ToString("0");
 
                                     break;
 
