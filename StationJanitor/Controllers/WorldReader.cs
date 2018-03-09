@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Xml;
+using System.Diagnostics;
 
 
 namespace StationJanitor.Controllers
@@ -16,8 +17,9 @@ namespace StationJanitor.Controllers
         {
 
             XmlDocument World = new XmlDocument();
+            string originalXmlPath = System.IO.Path.Combine(PathToXML.TrimEnd(new char[] { '"' }), "world.xml");
 
-            string originalXmlPath = System.IO.Path.Combine(PathToXML, "world.xml");
+            Debug.WriteLine(originalXmlPath);
 
             if (!File.Exists(originalXmlPath))
             {
@@ -45,7 +47,7 @@ namespace StationJanitor.Controllers
         public static void SaveWorld(String PathToXml, XmlDocument World)        
         {
 
-            string originalXmlPath = System.IO.Path.Combine(PathToXml, "world.xml");
+            string originalXmlPath = System.IO.Path.Combine(PathToXml.TrimEnd(new char[] { '"' }), "world.xml");
             World.Save(originalXmlPath);
 
 
