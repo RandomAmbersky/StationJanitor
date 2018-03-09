@@ -167,7 +167,8 @@ namespace StationJanitor.Controllers
                 "Chlorine",
                 "Welder",
                 "Furnace",
-                "Air"
+                "Air",
+                "Empty"
             };
 
             foreach (XmlNode Thing in Things)
@@ -206,6 +207,12 @@ namespace StationJanitor.Controllers
 
                             switch (Thing.SelectSingleNode("CustomName").InnerText)
                             {
+
+                                case "Empty":
+
+                                    Thing.SelectSingleNode("CustomColorIndex").InnerText = "-1"; // White
+
+                                    break;
 
                                 case "Oxygen":
 
