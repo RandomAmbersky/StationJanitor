@@ -6,7 +6,7 @@ Currently only has one command to remove objects scattered on the ground.
 **I made this for myself, use at your own risk!** (Though it makes a backup of your save!)
 
 ## Installation
-You can compile it yourself, or download the latest versione [here](https://www.dropbox.com/sh/3856f7szexxm1hk/AACU2pRpinmJhcd3zwuIVhEIa?dl=0).
+You can compile it yourself, or download the latest version [here](https://www.dropbox.com/sh/3856f7szexxm1hk/AACU2pRpinmJhcd3zwuIVhEIa?dl=0).
 
 ## Usage
 ##### Removing orphaned items
