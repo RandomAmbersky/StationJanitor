@@ -20,7 +20,8 @@ namespace StationJanitor.Controllers
             ItemRoadFlare,
             DynamicAirController,
             DynamicScrubber,
-            DynamicLight
+            DynamicLight,
+            ElevatorCarrage
         }
 
         [CliCommand("removeTrash", "Removes all objects lying on the ground")]
