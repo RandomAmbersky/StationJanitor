@@ -53,7 +53,7 @@ namespace StationJanitor.Controllers
 
         }
 
-        [CliCommand("Batteries","Max out battery charge")]
+        [CliCommand("Batteries", "Max out battery charge")]
         public static void FillBatteries(string PathToWorldXml)
         {
 
@@ -152,7 +152,8 @@ namespace StationJanitor.Controllers
                 { "StructureTankSmall", 30000 },
                 { "DynamicGasCanisterEmpty", 15000 },
                 { "StructureTankBig", 300000 },
-                { "ItemGasCanisterEmpty",75 }
+                { "ItemGasCanisterEmpty",75 },
+                { "ItemGasCanisterSmart", 150 }
             };
 
             List<string> Gases = new List<string>()
@@ -277,7 +278,7 @@ namespace StationJanitor.Controllers
                                 case "Pollutant":
                                 case "Chlorine":
 
-                                    Thing.SelectSingleNode("CustomColorIndex").InnerText = "5"; // No idea
+                                    Thing.SelectSingleNode("CustomColorIndex").InnerText = "7"; // No idea
 
                                     Content.SelectSingleNode("Chlorine").InnerText = MolesToAdd.ToString("0");
                                     Content.SelectSingleNode("Energy").InnerText = (MolesToAdd * 24.8 * SetTemperature).ToString("0");
@@ -286,20 +287,21 @@ namespace StationJanitor.Controllers
 
                                 case "Air":
 
-                                    Thing.SelectSingleNode("CustomColorIndex").InnerText = "9"; // No Idea
+                                    Thing.SelectSingleNode("CustomColorIndex").InnerText = "5"; // No Idea
 
-                                    Ratio = MolesToAdd / 4;
+                                    Ratio = MolesToAdd / 100;
 
-                                    Content.SelectSingleNode("Oxygen").InnerText = Math.Abs(Ratio).ToString("0"); ;
-                                    Content.SelectSingleNode("Nitrogen").InnerText = Math.Abs(3 * Ratio).ToString("0");
+                                    Content.SelectSingleNode("Oxygen").InnerText = Math.Abs(77 * Ratio).ToString("0"); ;
+                                    Content.SelectSingleNode("CarbonDioxide").InnerText = Math.Abs(3 * Ratio).ToString("0");
+                                    Content.SelectSingleNode("Nitrogen").InnerText = Math.Abs(20 * Ratio).ToString("0");
 
-                                    Content.SelectSingleNode("Energy").InnerText = ((Math.Abs(Ratio) * 21.1 * SetTemperature) + (Math.Abs(3 * Ratio) * 20.6 * SetTemperature)).ToString("0");
+                                    Content.SelectSingleNode("Energy").InnerText = ((Math.Abs(Ratio * 77) * 21.1 * SetTemperature) + (Math.Abs(3 * Ratio) * 28.2 * SetTemperature) + (Math.Abs(20 * Ratio) * 20.6 * SetTemperature)).ToString("0");
 
                                     break;
 
                                 case "Furnace":
 
-                                    Thing.SelectSingleNode("CustomColorIndex").InnerText = "7"; // Black
+                                    Thing.SelectSingleNode("CustomColorIndex").InnerText = "6"; // Black
 
                                     Ratio = MolesToAdd / 5;
 
